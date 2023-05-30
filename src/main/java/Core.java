@@ -12,9 +12,13 @@ public class Core {
     public static ArrayList<String> unsubscribeLinkList = new ArrayList<>();
 
     public static void main(String[] args) {
-        logger.debug(System.getProperty("user.dir"));
 
-        String startFolder = args[0];
+        String startFolder;
+        if (args.length > 0) startFolder = args[0];
+        else {
+            logger.warn("No folder provided, assuming working directory.");
+            startFolder = System.getProperty("user.dir");
+        }
 
         EmailFileVisitor visitor = new EmailFileVisitor();
         try {
