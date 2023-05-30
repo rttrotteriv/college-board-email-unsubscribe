@@ -49,7 +49,7 @@ public class EmailFileVisitor implements FileVisitor<Path> {
                 Core.unsubscribeLinkList.add(link);
 
                 // people I really don't want to unsubscribe from
-                if (link.contains("collegeboard") || link.contains("cyberstart")) {
+                if (link.contains("collegeboard") || link.contains("cyberstart") || link.contains("bncollege")) {
                     logger.fatal("Critical sender's email: " + filename);
                     throw new RuntimeException("Unsubscribe from critical sender attempted.");
                 }
