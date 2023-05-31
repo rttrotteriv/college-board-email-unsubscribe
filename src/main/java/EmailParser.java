@@ -1,35 +1,41 @@
-import jakarta.mail.MessagingException;
-import jakarta.mail.Session;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.internet.MimeMultipart;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 public class EmailParser {
     private static final Logger logger = LogManager.getLogger("xyz.cheesetron.email.parse");
 
-
     /**
+     * Finds the unsubscribe link in a file.
+     *
      * @param inputStream stream for email file
      * @return the email's unsubscribe link
      */
     public static String processEmail(InputStream inputStream) throws LinkNotFoundException {
-        MimeMessage message = null;
+        MimeMessage message;
         try {
             message = new MimeMessage(Session.getInstance(System.getProperties()), inputStream);
         } catch (MessagingException e) {
             logger.error(e);
+            return "";
         }
 
         return findUnsubscribeLink(toHTML(message));
     }
 
     /**
+     * Converts an email message to an HTML String.
+     *
      * @param message Email message to process
      * @return HTML in form of a string
      */
@@ -53,16 +59,18 @@ public class EmailParser {
                 return "";
             }
         } catch (IOException | MessagingException e) {
-            throw new RuntimeException(e);
+            logger.error(e);
+            return "";
         }
     }
 
     /**
-     * Ugly bodged helper method - phrasing of unsubscribe link's text found in the wild through brute force
+     * Ugly helper method - phrasing of unsubscribe link's text found in the wild through brute force
      *
      * @param content HTML message content
      * @return unsubscribe link
      */
+    @SuppressWarnings("DataFlowIssue")
     private static String findUnsubscribeLink(String content) throws LinkNotFoundException {
         Document doc = Jsoup.parse(content);
         // CSS selector: "a" -> link elements ":matches()" -> selector getting any element containing the text within
