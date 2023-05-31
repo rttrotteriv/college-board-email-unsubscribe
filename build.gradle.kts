@@ -3,6 +3,15 @@ plugins {
     id("application")
 }
 
+tasks.jar {
+    manifest {
+        attributes(
+            "Manifest-Version" to archiveVersion,
+            "Main-Class" to "Core"
+        )
+    }
+}
+
 group = "xyz.cheesetron"
 version = "1.0"
 

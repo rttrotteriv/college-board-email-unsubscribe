@@ -8,6 +8,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
+/**
+ * FileVisitor that finds links in .emlx and .eml files
+ */
 public class EmailFileVisitor implements FileVisitor<Path> {
 
     private static final Logger logger = LogManager.getLogger("xyz.cheesetron.email.files");
