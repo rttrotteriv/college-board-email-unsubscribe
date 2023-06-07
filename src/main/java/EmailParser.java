@@ -48,10 +48,10 @@ public class EmailParser {
             } else if (content instanceof MimeMultipart) {
                 logger.debug("Multipart message in " + ((MimeMultipart) content).getCount() + " parts");
                 // the first body part is plain text formatted message, second is html document
-                if (((MimeMultipart) content).getCount() > 1)
+                if (((MimeMultipart) content).getCount() > 1 && ((MimeMultipart) content).getBodyPart(1).getContent() instanceof String)
                     return (String) ((MimeMultipart) content).getBodyPart(1).getContent();
                 else {
-                    logger.error("One part message occurred where multipart message expected.");
+                    logger.error("One part message occurred where multipart message expected, or unexpected content type.");
                     return "";
                 }
             } else {

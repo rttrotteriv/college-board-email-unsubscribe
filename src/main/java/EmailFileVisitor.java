@@ -49,13 +49,14 @@ public class EmailFileVisitor implements FileVisitor<Path> {
         if (filename.endsWith(".emlx") || filename.endsWith(".eml")) {
             try {
                 String link = EmailParser.processEmail(Files.newInputStream(file));
-                Core.unsubscribeLinkList.add(link);
 
                 // people I really don't want to unsubscribe from
                 if (link.contains("collegeboard") || link.contains("cyberstart") || link.contains("bncollege")) {
-                    logger.fatal("Critical sender's email: " + filename);
-                    throw new RuntimeException("Unsubscribe from critical sender attempted.");
+                    logger.warn("Critical sender detected, ignoring file " + filename);
+                    return FileVisitResult.CONTINUE;
                 }
+
+                Core.unsubscribeLinkList.add(link);
 
             } catch (LinkNotFoundException e) {
                 logger.warn("Couldn't find unsubscribe link in \"" + filename + "\". Message is likely malformed or requires manual removal.");
