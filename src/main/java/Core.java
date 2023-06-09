@@ -16,12 +16,13 @@ public class Core {
 
     public static void main(String[] args) {
 
-        String startFolder;
-        if (args.length > 0) startFolder = args[0];
-        else {
-            logger.warn("No folder provided, assuming working directory.");
-            startFolder = System.getProperty("user.dir");
-        }
+        String startFolder = null;
+        if (args.length == 0) {
+            System.out.println("Usage:\n" +
+                    "    emailunsubscribe [folder containing .eml files to unsubscribe from]");
+            System.exit(1);
+        } else startFolder = args[0];
+
 
         EmailFileVisitor visitor = new EmailFileVisitor();
         try {
@@ -36,7 +37,7 @@ public class Core {
         // This is an executor, a high level object for managing Runnables/Callables which kind of work like threads
         Executor executor = Executors.newCachedThreadPool();
 
-        // This uses the executor and basically makes two piles of tasks and results.
+        // This uses the executor and basically makes two queues of tasks and results.
         ExecutorCompletionService<Boolean> cs = new ExecutorCompletionService<>(executor);
 
         for (String link : unsubscribeLinkList) {
@@ -53,7 +54,8 @@ public class Core {
                 logger.error(e);
             }
         }
-        logger.info("Unsubscribed sucessfully from " + successCount + " emails.");
-        System.exit(0); // it doesn't exit unless you explicitly tell it to for some reason
+        logger.info("Unsubscribed successfully from " + successCount + " emails.");
+        // it doesn't exit unless you explicitly tell it to as there are other threads that need to be told we're done
+        System.exit(0);
     }
 }
